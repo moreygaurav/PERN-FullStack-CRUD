@@ -1,4 +1,21 @@
+import React, { useState } from 'react';
+
 export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [job, setJob] = useState('');
+    const [price, setPrice] = useState('');
+    const [status, setStatus] = useState(false);
+
+    const handleStatusChange = (e) => {
+        setStatus(e.target.value === 'active');
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault() ;
+        onSubmit({ name, email, job, price, status });
+        onClose();
+    };
     return (
         <>
             <dialog id="my_modal_4" className="modal" open={isOpen}>
@@ -28,6 +45,7 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
                                     minLength="3"
                                     maxLength="30"
                                     title="Only letters, numbers or dash"
+                                    value={name} onChange={(e) => setName(e.target.value)}
                                 />
                             </label>
 
@@ -45,7 +63,7 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
                                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                                     </g>
                                 </svg>
-                                <input type="email" placeholder="mail@site.com" required />
+                                <input type="email" placeholder="mail@site.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
                             </label>
                             <div className="validator-hint hidden">Enter valid email address</div>
 
@@ -63,7 +81,7 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
                                         <path d="M3.5999999999999996 8.5L7.5744680851063835e-16 -4.76837158447793e-16L3.5999999999999996 -4.76837158447793e-16L7.18433546586743e-16 -4.76837158447793e-16L3.5999999999999996 -4.76837158447793e-16"></path>
                                     </g>
                                 </svg>
-                                <input type="text" placeholder="Job Title" required />
+                                <input type="text" placeholder="Job Title" required value={job} onChange={(e) => setJob(e.target.value)} />
                             </label>
 
                             {/* price input */}
@@ -73,7 +91,7 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
                                 </svg>
 
 
-                                <input type="number" placeholder="Price" required />
+                                <input type="number" placeholder="Price" required value={price} onChange={(e) => setPrice(e.target.value)} />
                             </label>
 
                             {/* status input */}
@@ -90,8 +108,8 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
                                     </g>
                                 </svg>
 
-                                <select required className=" w-full opacity-50 bg-base-100" defaultValue="">
-                                    <option value="" disabled selected >
+                                <select required value={status} className=" w-full opacity-50 bg-base-100" defaultValue="" onChange={(e) => setStatus(e.target.value === 'active')}>
+                                    <option value="" disabled>
                                         Status
                                     </option>
                                     <option value="active">Active</option>
@@ -108,7 +126,7 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit }) {
                                 Close
                             </button>
 
-                            <button className="btn btn-success float-right mr-2" onClick={onSubmit}>
+                            <button className="btn btn-success float-right mr-2" onClick={handleSubmit}>
                                 {mode === 'edit' ? 'Save Changes' : 'Add Client'}
                             </button>
                         </form>
