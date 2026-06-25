@@ -93,10 +93,19 @@ export const updateClient = async (id, clientData) => {
 export const deleteClient = async (id) => {
     try {
         const result = await query(`delete from clients_db where id=$1 returning id`, [id]);
-return result.rowCount > 0;
+        return result.rowCount > 0;
     }
-    catch(error){
+    catch (error) {
         console.log("Delete client service error:", error);
         throw error;
     }
 };
+
+
+export const searchClients = async (searchTerm) => {
+    const { rows } = await query(
+        'select * from clients_db where name ILIKE $1 or email ILIKE $1',
+       [`%${searchTerm}%`]
+    )
+    return rows;
+}
