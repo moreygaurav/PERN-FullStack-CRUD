@@ -19,7 +19,7 @@ export const getClients = async (req, res) => {
 export const createClient = async (req, res) => {
     try {
 
-        const { name, email, job, rate, isActive } = req.query;
+        const { name, email, job, rate, isActive } = req.body;
 
         if (!name || !email) {
             return res.status(400).json({
@@ -27,7 +27,7 @@ export const createClient = async (req, res) => {
             });
         }
 
-        const newClient = await clientServices.createClient(req.query);
+        const newClient = await clientServices.createClient(req.body);
 
 
         res.status(201).json({
@@ -52,7 +52,7 @@ export const deleteClient = async (req, res) => {
             });
         }
 
-        const deleted = await clientService.deleteClient(id);
+        const deleted = await clientServices.deleteClient(id);
 
         if (!deleted) {
             return res.status(404).json({
@@ -100,7 +100,7 @@ export const updateClient = async (req, res) => {
             });
         }
 
-        const updatedClient = await updateService.updateClient(clientId, clientData);
+        const updatedClient = await clientServices.updateClient(clientId, clientData);
 
         if (!updatedClient) {
             return res.status(404).json({
@@ -142,7 +142,7 @@ export const searchClient = async (req, res) => {
         res.status(200).json({
             success: true,
             data: searchClients,
-            count: searchClients.le
+            count: searchClients.length
         });
     } catch (error) {
         console.error('error serching clients:', error);

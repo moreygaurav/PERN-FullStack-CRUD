@@ -1,13 +1,42 @@
-export default function TableList({ handleOpen }) {
-  const clients = [
-    { id: 1, name: "Cy Ganderton", email: "cy.ganderton@example.com", job: "Quality Control Specialist", rate: "$25/hr", isActive: "Active" },
-    { id: 2, name: "Hildegard Kessler", email: "hildegard.kessler@example.com", job: "Sales Associate", rate: "$20/hr", isActive: "Inactive" },
-    { id: 3, name: "Cy Ganderton", email: "cy.ganderton@example.com", job: "Quality Control Specialist", rate: "$25/hr", isActive: "Active" },
-    { id: 4, name: "Hildegard Kessler", email: "hildegard.kessler@example.com", job: "Sales Associate", rate: "$20/hr", isActive: "Inactive" }
-  ];
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useState } from 'react';
+
+
+export default function TableList({ handleOpen, SearchTerm, reload}) {
+
+  const [TableData, setTableData] = useState([]);
+  const [error, setError] = useState(null);
+
+
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/clients");
+      setTableData(response.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  fetchData();
+}, [reload]);
+
+console.log("table data",TableData);
+console.log("search term",SearchTerm);
+
+  // filter the table Data on the searchTerm
+  const filteredData = TableData.filter(client =>
+    client.name.toLowerCase().includes(SearchTerm.toLocaleLowerCase()) ||
+    client.email.toLocaleLowerCase().includes(SearchTerm.toLocaleLowerCase()) ||
+    client.job.toLocaleLowerCase().includes(SearchTerm.toLocaleLowerCase())
+  );
 
   return (
     <>
+
+      {error && <div className='alert alert-error' >(error)</div>}
+
       <div className="overflow-x-auto m-10">
         <table className="table">
           {/* head */}
@@ -23,7 +52,7 @@ export default function TableList({ handleOpen }) {
           </thead>
           <tbody className="hover:bg-base-300">
 
-            {clients.map((client) => {
+            {filteredData.map((client) => {
               return (
                 <tr key={client.id} className="hover:bg-base-100">
                   <th>{client.id}</th>
@@ -32,21 +61,18 @@ export default function TableList({ handleOpen }) {
                   <td>{client.job}</td>
                   <td>{client.rate}</td>
                   <td>
-                    <button className={`btn w-20 border-1 border-solid   ${client.isActive === "Active" ? "btn-primary" : "btn-outline"} `} >{client.isActive}</button>
+                    <button className={`btn w-20 border-1 border-solid   ${client.isactive ? "btn-primary" : "btn-outline"} `} >{client.isactive ? "Active" : "Inactive"}</button>
                   </td>
-           {/*Update button*/}
+                  {/*Update button*/}
                   <td>
                     <button className={`btn btn-secondary w-20 border-1 border-solid`} onClick={() => handleOpen('edit')}>Update</button> </td>
-              {/*Delete button*/}
+                  {/*Delete button*/}
                   <td>
                     <button className={`btn btn-error w-20 border-1 border-solid`}>Delete</button> </td>
                 </tr>
 
               );
             })}
-
-            {/* row 1 */}
-
           </tbody>
         </table>
       </div>

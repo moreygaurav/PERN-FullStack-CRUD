@@ -10,7 +10,7 @@ app.use(express.json());
 
 
 
-app.use('/api', clientRoutes);
+app.use('/api/clients', clientRoutes);
 
 
 

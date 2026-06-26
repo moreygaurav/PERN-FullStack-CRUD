@@ -3,10 +3,16 @@ import './App.css'
 import Navbar from './components/Navbar';
 import TableList from './components/TableList';
 import ModelForm from './components/ModelForm';
+import axios from 'axios';
+
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [modelModel, setModelModal] = useState('add');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [clientData, setClientData] = useState(null);
+  const [reload, setReload] = useState(false);
+
 
   const handleOpen = (model) => {
     setModelModal(model);
@@ -17,9 +23,25 @@ function App() {
     setIsOpen(false);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async (newClientData) => {
+     await axios.post(
+      "http://localhost:5000/api/clients",
+      newClientData
+    );
+
+    setReload(prev => !prev);
     if (modelModel === 'add') {
       // add model
+      try {
+        console.log("new client", newClientData);
+        const response = await axios.post('http://localhost:5000/api/clients', newClientData)
+
+        fetchClients(); // Refresh list
+        handleClose();
+      } catch (err) {
+        console.error(err.response?.data);
+        console.error(err.response?.status);
+      }
       console.log('add model');
     } else if (modelModel === 'edit') {
       // edit model 
@@ -28,15 +50,17 @@ function App() {
   }
 
 
+
   return (
     <>
-      <Navbar onOpen={() => handleOpen('add')} />
-      <TableList handleOpen={handleOpen} />
+      <Navbar onOpen={() => handleOpen("add")} onSearch={setSearchTerm} />
+      <TableList handleOpen={handleOpen} SearchTerm={searchTerm} reload={reload} />
       <ModelForm
         isOpen={isOpen}
         mode={modelModel}
         onClose={handleClose}
         onSubmit={handleSubmit}
+        clientData={clientData}
       />
     </>
   )
