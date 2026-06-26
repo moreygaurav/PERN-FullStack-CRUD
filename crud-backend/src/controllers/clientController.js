@@ -129,17 +129,21 @@ export const updateClient = async (req, res) => {
 export const searchClient = async (req, res) => {
 
     try {
-        const searchTerm = req.query.q;
+       const searchTerm = req.query.q?.trim();
 
         if (!searchTerm) {
             return res.status(400).json({
                 success: false,
-                message: "search ierm is required"
+                message: "search Term is required"
             });
         }
 
-        const searchClients = await clientService.searchClients(searchTerm);
-        res.status(200).json(clients);
+        const searchClients = await clientServices.searchClients(searchTerm);
+        res.status(200).json({
+            success: true,
+            data: searchClients,
+            count: searchClients.le
+        });
     } catch (error) {
         console.error('error serching clients:', error);
         res.status(500).json({

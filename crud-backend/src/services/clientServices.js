@@ -101,11 +101,10 @@ export const deleteClient = async (id) => {
     }
 };
 
-
 export const searchClients = async (searchTerm) => {
     const { rows } = await query(
-        'select * from clients_db where name ILIKE $1 or email ILIKE $1',
-       [`%${searchTerm}%`]
-    )
+        'SELECT * FROM clients_db WHERE name ILIKE $1 OR email ILIKE $1',
+        [`%${searchTerm}%`]
+    );
     return rows;
-}
+};
