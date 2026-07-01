@@ -3,27 +3,27 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 
-export default function TableList({ handleOpen, SearchTerm, reload}) {
+export default function TableList({ handleOpen, SearchTerm, reload, onDelete }) {
 
   const [TableData, setTableData] = useState([]);
   const [error, setError] = useState(null);
 
 
- useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/clients");
-      setTableData(response.data);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/clients");
+        setTableData(response.data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
 
-  fetchData();
-}, [reload]);
+    fetchData();
+  }, [reload]);
 
-console.log("table data",TableData);
-console.log("search term",SearchTerm);
+  console.log("table data", TableData);
+  console.log("search term", SearchTerm);
 
   // filter the table Data on the searchTerm
   const filteredData = TableData.filter(client =>
@@ -31,6 +31,8 @@ console.log("search term",SearchTerm);
     client.email.toLocaleLowerCase().includes(SearchTerm.toLocaleLowerCase()) ||
     client.job.toLocaleLowerCase().includes(SearchTerm.toLocaleLowerCase())
   );
+
+
 
   return (
     <>
@@ -41,8 +43,8 @@ console.log("search term",SearchTerm);
         <table className="table">
           {/* head */}
           <thead>
-            <tr>
-              <th></th>
+            <tr >
+              <th ></th>
               <th>Name</th>
               <th>Email</th>
               <th>Job</th>
@@ -65,10 +67,12 @@ console.log("search term",SearchTerm);
                   </td>
                   {/*Update button*/}
                   <td>
-                    <button className={`btn btn-secondary w-20 border-1 border-solid`} onClick={() => handleOpen('edit')}>Update</button> </td>
+                    <button className={`btn btn-secondary w-20 border-1 border-solid`} onClick={() => handleOpen('edit', client)}>Update</button> </td>
                   {/*Delete button*/}
                   <td>
-                    <button className={`btn btn-error w-20 border-1 border-solid`}>Delete</button> </td>
+                    <button className={`btn btn-error w-20 border-1 border-solid`}
+                      onClick={() => onDelete(client.id)}
+                    >Delete</button> </td>
                 </tr>
 
               );

@@ -19,7 +19,7 @@ export const getClients = async (req, res) => {
 export const createClient = async (req, res) => {
     try {
 
-        const { name, email, job, rate, isActive } = req.body;
+        const { name, email, job, rate, isactive } = req.body;
 
         if (!name || !email) {
             return res.status(400).json({

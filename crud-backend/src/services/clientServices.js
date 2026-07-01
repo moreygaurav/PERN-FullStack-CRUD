@@ -3,7 +3,7 @@ import { query } from '../db.js';
 // Get all clients
 export const getClients = async () => {
     const result = await query(
-        'SELECT * FROM clients_db'
+        'SELECT * FROM clients_db ORDER BY id ASC' 
     );
 
     return result.rows;

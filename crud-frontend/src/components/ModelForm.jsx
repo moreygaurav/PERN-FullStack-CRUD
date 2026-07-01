@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 
 export default function ModelForm({ isOpen, onClose, mode, onSubmit, clientData }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [job, setJob] = useState('');
     const [price, setPrice] = useState('');
-    const [status, setStatus] = useState(false);
+    const [status, setStatus] = useState("active");
 
-    const handleStatusChange = (e) => {
-        setStatus(e.target.value === 'active');
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,7 +17,7 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit, clientData 
                 email,
                 job,
                 rate: Number(price),
-                isActive: status,
+                isActive: status == "active",
             };
             await onSubmit(clientData);
         } catch (err) {
@@ -27,13 +25,35 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit, clientData 
         }
         onClose();
     };
+
+
+
+    useEffect(() => {
+        if (mode === 'edit' && clientData) {
+            setName(clientData.name || '');
+            setEmail(clientData.email || '');
+            setJob(clientData.job || '');
+            setPrice(clientData.rate || '');
+            setStatus(clientData.isActive ? 'active' : 'inactive');
+        } else {
+            setName('');
+            setEmail('');
+            setJob('');
+            setPrice('');
+            setStatus('active');
+        }
+
+    }, [mode, clientData]);
+
+
+
     return (
         <>
             <dialog id="my_modal_4" className="modal" open={isOpen}>
-                <div className="modal-box w-3/12 max-w-5xl justify-center">
+                <div className="modal-box w-2/11 max-w-5xl justify-center">
                     <h3 className="font-bold text-lg py-4">{mode === 'edit' ? 'Edit Client' : 'Client Details'}</h3>
                     <div className="modal-action">
-                        <form method="dialog">
+                        <form method="dialog" onSubmit={handleSubmit}>
                             {/* name input*/}
                             <label className="input validator">
                                 <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -105,39 +125,33 @@ export default function ModelForm({ isOpen, onClose, mode, onSubmit, clientData 
                                 <input type="number" placeholder="Price" required value={price} onChange={(e) => setPrice(e.target.value)} />
                             </label>
 
-                            {/* status input */}
-                            <label className="input validator mt-2">
-                                <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <g
-                                        strokeLinejoin="round"
-                                        strokeLinecap="round"
-                                        strokeWidth="2.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                    >
-                                        <path d="M9.663 17h4.673L21 12l-5.663-5H9.663L3.587.5l-.777.777L9.663zM9.663,17 L9.663,7"></path>
-                                    </g>
-                                </svg>
-
-                                <select required value={status} className=" w-full opacity-50 bg-base-100" defaultValue="" onChange={(e) => setStatus(e.target.value === 'active')}>
-                                    <option value="" disabled>
+                            {/* Status */}
+                            <div className="form-control mt-2">
+                                <label className="label">
+                                    <span className="label-text flex items-center gap-2">
+                                        <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673L21 12l-5.663-5H9.663L3.587.5l-.777.777L9.663zM9.663,17 L9.663,7" />
+                                        </svg>
                                         Status
-                                    </option>
+                                    </span>
+                                </label>
+                                <select
+                                    required
+                                    value={status}
+                                    className="select select-bordered w-full"
+                                    onChange={(e) => setStatus(e.target.value)}
+                                >
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
-
-                            </label>
-
-                            <p className="validator-hint">
-                                Must be 3 to 30 characters
-                                <br />containing only letters, numbers or dash
-                            </p>
+                            </div>
+                            <br />
+                            <br />
                             <button className="btn float-right ml-2" onClick={onClose}>
                                 Close
                             </button>
 
-                            <button className="btn btn-success float-right mr-2" onClick={handleSubmit}>
+                            <button className="btn btn-success float-right" onClick={handleSubmit}>
                                 {mode === 'edit' ? 'Save Changes' : 'Add Client'}
                             </button>
                         </form>
